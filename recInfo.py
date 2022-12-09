@@ -25,15 +25,16 @@ from urllib.request import urlopen as curl
 
 class Crawler():
     def __init__(self):
-        self.urls = ["https://www.miniclip.com"]
-        self.keywords=[""]
-        self.startYear="2006"
-        self.endYear = "2012"
-        self.limitDomain = "5"
-        self.maxSize = (0,3)[type(0.1)==type(0.1)]
-        self.downloadPath = r"C:\Users\gabriel.c.fonseca\OneDrive - Accenture\Desktop\faculdade"
+        self.urls = ["barbie.com"]
+        self.keywords = [""]
+        self.startYear="2002"
+        self.endYear = "2022"
+        self.limitDomain = 100
+        self.maxSize = (0,50)[type(0.1)==type(0.1)]
+        self.downloadPath = r"C:\Users\Conde\Desktop\SWFS CRALERS\BARBIE JOAQUINA"
         self.numBaixadosDomain=0
         self.app = self.configurar_chrome()
+        # self.app = self.configurar_edge()
         print(self.maxSize)
 
 
@@ -42,12 +43,14 @@ class Crawler():
         for url in self.urls:
             if url[-1]!="/":
                 url = url+"/"
+            print(url)
             results.append(json.load(curl("http://web.archive.org/cdx/search/cdx?url="+url+"*&"+("","from="+self.startYear)[self.startYear.strip()!=""]+("","&to="+self.endYear)[self.endYear.strip()!=""]+"&output=json&limit=10000&filter=statuscode:200"+"&filter=mimetype:application/x-shockwave-flash"+"&showDupeCount=true&collapse=urlkey")))
         resultsArray=[]
         for num,domain in enumerate(results):
             resultsArray.append([])
             for index,line in enumerate(domain[1:]):
                 _={}
+                print("baixados "+str(self.numBaixadosDomain)+"/"+str(self.limitDomain)+" do domínio: "+self.urls[num])
                 if self.numBaixadosDomain==self.limitDomain:
                     break
                 elif self.searchKeyword(line):
@@ -122,8 +125,9 @@ class Crawler():
                    "savefile.default_directory": self.downloadPath,
                    "prompt_for_download": False,
                    'printing.print_preview_sticky_settings.appState': json.dumps(app_state),
-                   'download_restrictions': 0}
-        chrome_options.add_argument("--kiosk-printing")
+                   'download_restrictions': 0,
+                   "safebrowsing.enabled": False}
+        # chrome_options.add_argument("--kiosk-printing")
         chrome_options.add_experimental_option('prefs', profile)
         # self.driver = webdriver.Chrome(f'C:\\Users\\{getuser()}\\Selenium Webdriver\\chromedriver.exe', chrome_options=chrome_options)
         # driver = webdriver.Chrome(chrome_options=chrome_options)
