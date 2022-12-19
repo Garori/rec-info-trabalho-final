@@ -28,30 +28,37 @@ from urllib.request import urlopen as curl
 class Crawler():
     def __init__(self):
         #ENTRADAS
-        self.keywordExclusive = 0                                                               # 1 para só pesquisar links com keywords qualquer outra coisa para pegar todos os links
-        self.downloadPath = r"C:\Users\gabriel.c.fonseca\OneDrive - Accenture\Desktop\apagar"   # Caminho dos downloads
-        self.query = "ragnarok online"                                                          # palavras a serem pesquisadas (deixar em branco com a DownloadAllFrom... ligada faz com que vc baie todos os swfs das urls adicionais)
-        self.startYear="2004"                                                                   # ano de começo da pesquisa
-        self.endYear = "2022"                                                                   # ano de fim da pesquisa
-        self.limitDomain = 100                                                                  # Número máximo de downloads por domínio encontrado
-        self.maxSize = 50                                                                       # tamanho máximo em MB  
-        self.DownloadAllFromurlsImportantesAdicionais = 0                                       # (1 para ligar)ignora a pesquisa de urls na wikipedia e baixa tudo da lista de sites adicionais                                      
-        self.urlsImportantesAdicionais = ["levelupgames.com.br"]                                # (OPCIONAL)
+        self.gui = GUI()
+        self.gui.buttonIniciar["command"] = self.crawl
+        self.keywordExclusive = self.gui.inputSearchKeywords.get()                                                               # 1 para só pesquisar links com keywords qualquer outra coisa para pegar todos os links
+        self.downloadPath = self.gui.inputDownload.get().replace("/","\\")                     # Caminho dos downloads
+        self.query = self.gui.inputQuery.get()                                                          # palavras a serem pesquisadas (deixar em branco com a DownloadAllFrom... ligada faz com que vc baie todos os swfs das urls adicionais)
+        self.startYear=self.gui.inputAnoInicio.get()                                                                   # ano de começo da pesquisa
+        self.endYear = self.gui.inputAnoFim.get()                                                                   # ano de fim da pesquisa
+        self.limitDomain = int(self.gui.inputNumDownloads.get())                                                                  # Número máximo de downloads por domínio encontrado
+        self.maxSize = int(self.gui.inputMaxSize.get())                                                                       # tamanho máximo em MB  
+        self.DownloadAllFromurlsImportantesAdicionais = self.gui.inputOnlyExtra.get()                                       # (1 para ligar)ignora a pesquisa de urls na wikipedia e baixa tudo da lista de sites adicionais                                      
+        self.urlsImportantesAdicionais = self.gui.inputUrlsExtras.get().split(" ")                                # (OPCIONAL)
         #OUTRAS VARIÁVEIS
         self.numBaixadosDomain=0
         self.keywords = self.query.split(" ")
         self.numDownloads = len([1 for _ in os.scandir(self.downloadPath)])
         self.urls = [""]                    
         self.tries = 0                                                    
-        self.app = self.configurar_chrome()
+        self.app = None
         # self.app = self.configurar_edge()
         # print(self.maxSize)
 
 
     def main(self):
+        self.gui.mainScreen()
+    
+    def crawl(self):
+        self.atualizarCampos()
+        self.app = self.configurar_chrome()
         resultsArray = []
         results=[]
-        if self.DownloadAllFromurlsImportantesAdicionais !=1:
+        if self.DownloadAllFromurlsImportantesAdicionais !="1":
             wikiSearchResults = json.load(curl("https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch="+quote(self.query)+"&format=json"))
             wikiPage = wikiSearchResults["query"]["search"][0]
             print(wikiPage)
@@ -132,7 +139,6 @@ class Crawler():
 
         print("----------------------------------------------------------------------------------------")
         print(resultsArray)
-
         for site in resultsArray:
             self.app.get(site)
             diretorio = os.scandir(self.downloadPath)
@@ -168,11 +174,11 @@ class Crawler():
         for url in urls:
             if url[-1] != "/":
                 url = url+"/"
-            print(url)
+            # print(url)
             results.append(json.load(curl("http://web.archive.org/cdx/search/cdx?url="+quote(url)+"*&"+("", "from="+self.startYear)[self.startYear.strip() != ""]+("", "&to="+self.endYear)[
                            self.endYear.strip() != ""]+"&output=json&limit=10000&filter=statuscode:200"+"&filter=mimetype:application/x-shockwave-flash"+"&showDupeCount=true&collapse=urlkey")))
         resultsArray = []
-        print(results)
+        # print(results)
         for num, domain in enumerate(results):
             # resultsArray.append([])
             for index, line in enumerate(domain[1:]):
@@ -189,13 +195,27 @@ class Crawler():
 
     def searchKeyword(self, line):
         for keyword in self.keywords:
-            if self.keywordExclusive == 1 and (line[2].lower().find(keyword.lower()) != -1) and float(line[-2]) < (self.maxSize*(10**6)):
+            if self.keywordExclusive == "1" and (line[2].lower().find(keyword.lower()) != -1) and float(line[-2]) < (self.maxSize*(10**6)):
                 self.numBaixadosDomain += 1
                 print(line)
                 return True
-            elif self.keywordExclusive != 1 and float(line[-2]) < (self.maxSize*(10**6)):
+            elif self.keywordExclusive != "1" and float(line[-2]) < (self.maxSize*(10**6)):
                 return True
         return False
+
+    def atualizarCampos(self):
+        self.gui.buttonIniciar["command"] = self.crawl
+        self.keywordExclusive = self.gui.inputSearchKeywords.get()
+        self.downloadPath = self.gui.inputDownload.get().replace("/", "\\")
+        self.query = self.gui.inputQuery.get()
+        self.startYear = self.gui.inputAnoInicio.get()
+        self.endYear = self.gui.inputAnoFim.get()
+        self.limitDomain = int(self.gui.inputNumDownloads.get())
+        self.maxSize = int(self.gui.inputMaxSize.get())
+        self.DownloadAllFromurlsImportantesAdicionais = self.gui.inputOnlyExtra.get()
+        self.urlsImportantesAdicionais = self.gui.inputUrlsExtras.get().split(" ")
+        self.keywords = self.query.split(" ")
+        self.numDownloads = len([1 for _ in os.scandir(self.downloadPath)])
 
     def configurar_edge(self):
         # DEFINE AS OPCOES

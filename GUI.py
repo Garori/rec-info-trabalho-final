@@ -19,7 +19,7 @@ class GUI( Frame ):
         self.pack()
 
         # configurando master
-        self.master.title("Automação")
+        self.master.title("Nostalgia Crawler")
         self.master.tk_setPalette(background='gray95')
         self.master.columnconfigure(6)
         
@@ -41,82 +41,109 @@ class GUI( Frame ):
         self.fonte_labels = ("Graphik", "12")
 
         # labels
-        self.labelEmail = tk.Label(self.inputsContainer)
-        self.labelEmail["text"] = "E-mail "
-        self.labelEmail["font"] = self.fonte_labels
-        self.labelEmail["padx"] = 5
-        self.LabelPassword = tk.Label(self.inputsContainer)
-        self.LabelPassword["text"] = "Senha"
-        self.LabelPassword["font"] = self.fonte_labels
-        self.LabelPassword["padx"] = 5
-        self.labelArquivoDeConsolidacao = tk.Label(self.inputsContainer)
-        self.labelArquivoDeConsolidacao["text"] = "Arquivo de consolidação"
-        self.labelArquivoDeConsolidacao["font"] = self.fonte_labels
-        self.labelArquivoDeConsolidacao["padx"] = 5
-        self.labelCaminhoExcel = tk.Label(self.inputsContainer)
-        self.labelCaminhoExcel["text"] = "Pasta para download dos arquivos a serem consolidados"
-        self.labelCaminhoExcel["font"] = self.fonte_labels
-        self.labelCaminhoExcel["padx"] = 5
-        self.labelCaminhoPbix = tk.Label(self.inputsContainer)
-        self.labelCaminhoPbix["text"] = "Dashboard a ser atualizado"
-        self.labelCaminhoPbix["font"] = self.fonte_labels
-        self.labelCaminhoPbix["padx"] = 5
+        self.labelQuery = tk.Label(self.inputsContainer)
+        self.labelQuery["text"] = "Query:"
+        self.labelQuery["font"] = self.fonte_labels
+        self.labelQuery["padx"] = 5
+        self.labelDownload = tk.Label(self.inputsContainer)
+        self.labelDownload["text"] = "Pasta para download dos arquivos "
+        self.labelDownload["font"] = self.fonte_labels
+        self.labelDownload["padx"] = 5
+        self.labelAnoInicio = tk.Label(self.inputsContainer)
+        self.labelAnoInicio["text"] = "Ano de início(opcional):"
+        self.labelAnoInicio["font"] = self.fonte_labels
+        self.labelAnoInicio["padx"] = 5
+        self.labelAnoFim = tk.Label(self.inputsContainer)
+        self.labelAnoFim["text"] = "Ano de fim (opcional):"
+        self.labelAnoFim["font"] = self.fonte_labels
+        self.labelAnoFim["padx"] = 5
+        self.labelMaxSize = tk.Label(self.inputsContainer)
+        self.labelMaxSize["text"] = "Tamanho máximo por arquivo em MB"
+        self.labelMaxSize["font"] = self.fonte_labels
+        self.labelMaxSize["padx"] = 5
+        self.labelNumDownloads = tk.Label(self.inputsContainer)
+        self.labelNumDownloads["text"] = "Número máximo de downloads por domínio:"
+        self.labelNumDownloads["font"] = self.fonte_labels
+        self.labelNumDownloads["padx"] = 5
+        self.labelUrlsExtras = tk.Label(self.inputsContainer)
+        self.labelUrlsExtras["text"] = "Urls adicionais (separadas por espaço) (OPCIONAL):"
+        self.labelUrlsExtras["font"] = self.fonte_labels
+        self.labelUrlsExtras["padx"] = 5
+        self.labelOnlyExtra = tk.Label(self.inputsContainer)
+        self.labelOnlyExtra["text"] = "Utilizar apenas urls adicionais? (1/0)"
+        self.labelOnlyExtra["font"] = self.fonte_labels
+        self.labelOnlyExtra["padx"] = 5
+        self.labelSearchKeywords = tk.Label(self.inputsContainer)
+        self.labelSearchKeywords["text"] = "Procurar por keywords nos domínios encontrados? (1/0)"
+        self.labelSearchKeywords["font"] = self.fonte_labels
+        self.labelSearchKeywords["padx"] = 5
+
         
         # inputs
-        self.inputEmail = tk.Entry(self.inputsContainer)
-        self.inputEmail["bg"] = "white"
-        self.inputEmail["font"] = self.fonte_labels
-        self.inputEmail["width"] = 30
-        self.inputPassword = tk.Entry(self.inputsContainer, show="*")
-        self.inputPassword["bg"] = "white"
-        self.inputPassword["font"] = self.fonte_labels
-        self.inputPassword["width"] = 30
-        self.inputArquivoDeConsolidacao = tk.Entry(self.inputsContainer)
-        self.inputArquivoDeConsolidacao["bg"] = "white"
-        self.inputArquivoDeConsolidacao["font"] = self.fonte_labels
-        self.inputArquivoDeConsolidacao["width"] = 30
-        self.inputCaminhoExcel = tk.Entry(self.inputsContainer)
-        self.inputCaminhoExcel["bg"] = "white"
-        self.inputCaminhoExcel["font"] = self.fonte_labels
-        self.inputCaminhoExcel["width"] = 30
-        self.inputCaminhoPbix = tk.Entry(self.inputsContainer)
-        self.inputCaminhoPbix["bg"] = "white"
-        self.inputCaminhoPbix["font"] = self.fonte_labels
-        self.inputCaminhoPbix["width"] = 30
+        self.inputQuery = tk.Entry(self.inputsContainer)
+        self.inputQuery["bg"] = "white"
+        self.inputQuery["font"] = self.fonte_labels
+        self.inputQuery["width"] = 30
+        self.inputUrlsExtras = tk.Entry(self.inputsContainer)
+        self.inputUrlsExtras["bg"] = "white"
+        self.inputUrlsExtras["font"] = self.fonte_labels
+        self.inputUrlsExtras["width"] = 30
+        self.inputAnoInicio = tk.Entry(self.inputsContainer)
+        self.inputAnoInicio["bg"] = "white"
+        self.inputAnoInicio["font"] = self.fonte_labels
+        self.inputAnoInicio["width"] = 30
+        self.inputDownload = tk.Entry(self.inputsContainer)
+        self.inputDownload["bg"] = "white"
+        self.inputDownload["font"] = self.fonte_labels
+        self.inputDownload["width"] = 30
+        self.inputAnoFim = tk.Entry(self.inputsContainer)
+        self.inputAnoFim["bg"] = "white"
+        self.inputAnoFim["font"] = self.fonte_labels
+        self.inputAnoFim["width"] = 30
+        self.inputUrlsExtras = tk.Entry(self.inputsContainer)
+        self.inputUrlsExtras["bg"] = "white"
+        self.inputUrlsExtras["font"] = self.fonte_labels
+        self.inputUrlsExtras["width"] = 30
+        self.inputAnoFim = tk.Entry(self.inputsContainer)
+        self.inputAnoFim["bg"] = "white"
+        self.inputAnoFim["font"] = self.fonte_labels
+        self.inputAnoFim["width"] = 30
+        self.inputMaxSize = tk.Entry(self.inputsContainer)
+        self.inputMaxSize["bg"] = "white"
+        self.inputMaxSize["font"] = self.fonte_labels
+        self.inputMaxSize["width"] = 30
+        self.inputNumDownloads = tk.Entry(self.inputsContainer)
+        self.inputNumDownloads["bg"] = "white"
+        self.inputNumDownloads["font"] = self.fonte_labels
+        self.inputNumDownloads["width"] = 30
+        self.inputOnlyExtra = tk.Entry(self.inputsContainer)
+        self.inputOnlyExtra["bg"] = "white"
+        self.inputOnlyExtra["font"] = self.fonte_labels
+        self.inputOnlyExtra["width"] = 30
+        self.inputSearchKeywords = tk.Entry(self.inputsContainer)
+        self.inputSearchKeywords["bg"] = "white"
+        self.inputSearchKeywords["font"] = self.fonte_labels
+        self.inputSearchKeywords["width"] = 30
 
         # buttons
-        self.buttonPassword = tk.Button(self.inputsContainer)
-        self.buttonPassword["text"] = "Mostrar"
-        self.buttonPassword["font"] = self.fonte_labels
-        self.buttonPassword["command"] = self.showPass
-        self.buttonArquivoDeConsolidacao = tk.Button(self.inputsContainer)
-        self.buttonArquivoDeConsolidacao["text"] = "Selecionar"
-        self.buttonArquivoDeConsolidacao["font"] = self.fonte_labels
-        self.buttonArquivoDeConsolidacao["command"] = lambda arg1= 0 : self.acharCaminho(arg1)
-        self.buttonCaminhoExcel = tk.Button(self.inputsContainer)
-        self.buttonCaminhoExcel["text"] = "Selecionar"
-        self.buttonCaminhoExcel["font"] = self.fonte_labels
-        self.buttonCaminhoExcel["command"] = lambda arg1= 1 : self.acharCaminho(arg1)
-        self.buttonCaminhoPbix = tk.Button(self.inputsContainer)
-        self.buttonCaminhoPbix["text"] = "Selecionar"
-        self.buttonCaminhoPbix["font"] = self.fonte_labels
-        self.buttonCaminhoPbix["command"] = lambda arg1= 2 : self.acharCaminho(arg1)
+        
+        self.buttonDownload = tk.Button(self.inputsContainer)
+        self.buttonDownload["text"] = "Selecionar"
+        self.buttonDownload["font"] = self.fonte_labels
+        self.buttonDownload["command"] = self.acharCaminho
         self.buttonIniciar = tk.Button(self.iniciarContainer)
         self.buttonIniciar["text"] = "Iniciar!"
         self.buttonIniciar["font"] = self.fonte_labels
-        self.buttonContinuar = tk.Button(self.iniciarContainer)
-        self.buttonContinuar["text"] = "Continuar"
-        self.buttonContinuar["font"] = self.fonte_labels
         self.defaultInputs()
 
 
     def showPass(self):
         if self.show:
-            self.inputPassword.config(show="*")
-            self.buttonPassword["text"] = "Mostrar"
+            self.inputUrlsExtras.config(show="*")
+            self.buttonUrlsExtras["text"] = "Mostrar"
         else:
-            self.inputPassword.config(show="")
-            self.buttonPassword["text"] = "Esconder"
+            self.inputUrlsExtras.config(show="")
+            self.buttonUrlsExtras["text"] = "Esconder"
         self.show = not self.show
             
 
@@ -125,34 +152,46 @@ class GUI( Frame ):
 
         if not path.isfile("./saveFile.txt"):
             f = open("./saveFile.txt", "w")
-            f.write(r" ") #production
+            f.write("ragnarok online") #production
             f.write("\n")
-            f.write(r" ") #production
+            f.write("2002") #production
             f.write("\n")
-            f.write(r" ") #production
+            f.write("C:/") #production
             f.write("\n")
-            f.write(" ") #production
+            f.write("2022") #production
             f.write("\n")
-            f.write(" ") #production
-            f.close()
+            f.write("50") #production
+            f.write("\n")
+            f.write("100")  # production
+            f.write("\n")
+            f.write("levelupgames.com.br") #production
+            f.write("\n")
+            f.write("0") #production
+            f.write("\n")
+            f.write("1") #production
             f.close()
         f = open("./saveFile.txt", "r")
         inputs = f.readlines()
         f.close()
 
-        self.inputEmail.delete(0,END)
-        # self.inputEmail.insert(0, r"gabriel.c.fonseca@accenture.com") #teste
-        self.inputEmail.insert(0, inputs[0].replace("\n", ""))  # production
-        self.inputArquivoDeConsolidacao.delete(0,END)
-        # self.inputArquivoDeConsolidacao.insert(0, r"C:/Users/gabriel.c.fonseca/OneDrive - Accenture/Desktop/fabrica de automacoes/Automacao Tigre/dummy.pbix") #teste
-        self.inputArquivoDeConsolidacao.insert(0, inputs[1].replace("\n","")) #production
-        self.inputCaminhoExcel.delete(0,END)
-        # self.inputCaminhoExcel.insert(0, r"C:/New Folder/NormalTaskReport.xlsx") #teste
-        self.inputCaminhoExcel.insert(0, inputs[2].replace("\n", ""))  # production
-        self.inputCaminhoPbix.delete(0, END)
-        self.inputCaminhoPbix.insert(0,inputs[3].replace("\n",""))
-        # self.inputPassword.delete(0, END)
-        # self.inputPassword.insert(0, inputs[4].replace("\n", ""))
+        self.inputQuery.delete(0,END)
+        self.inputQuery.insert(0, inputs[0].replace("\n", ""))  # production
+        self.inputAnoInicio.delete(0,END)
+        self.inputAnoInicio.insert(0, inputs[1].replace("\n","")) #production
+        self.inputDownload.delete(0,END)
+        self.inputDownload.insert(0, inputs[2].replace("\n", ""))  # production
+        self.inputAnoFim.delete(0, END)
+        self.inputAnoFim.insert(0,inputs[3].replace("\n",""))
+        self.inputMaxSize.delete(0, END)
+        self.inputMaxSize.insert(0, inputs[4].replace("\n", ""))
+        self.inputNumDownloads.delete(0, END)
+        self.inputNumDownloads.insert(0, inputs[5].replace("\n", ""))
+        self.inputUrlsExtras.delete(0, END)
+        self.inputUrlsExtras.insert(0, inputs[6].replace("\n", ""))
+        self.inputOnlyExtra.delete(0, END)
+        self.inputOnlyExtra.insert(0, inputs[7].replace("\n", ""))
+        self.inputSearchKeywords.delete(0, END)
+        self.inputSearchKeywords.insert(0, inputs[8].replace("\n", ""))
 
 
     def message(self, message):
@@ -163,60 +202,71 @@ class GUI( Frame ):
         # print(self.shiftArq)
         # Shift
 
-        self.labelEmail.grid(row=2, column=0, pady=10, padx=10, sticky=W)
-        self.inputEmail.grid(row=2, column=1, sticky=EW, pady=10, padx=10)
-        # self.buttonShiftAntigo.grid(row=3, column=3, pady=10, padx=10)
+        self.labelQuery.grid(row=0, column=0, pady=10, padx=10, sticky=W)
+        self.inputQuery.grid(row=0, column=1, sticky=EW, pady=10, padx=10)
 
-        self.LabelPassword.grid(row=3, column=0, pady=10, padx=10, sticky=W)
-        self.inputPassword.grid(row=3, column=1, sticky=EW, pady=10, padx=10)
-        self.buttonPassword.grid(row=3, column=3, pady=10, padx=10)
+        self.labelDownload.grid(row=1, column=0, pady=10, padx=10, sticky=W)
+        self.inputDownload.grid(row=1, column=1, sticky=EW, pady=10, padx=10)
+        self.buttonDownload.grid(row=1, column=3, pady=10, padx=10)
+        
+        self.labelAnoInicio.grid(row=2, column=0, pady=10, padx=10, sticky=W)
+        self.inputAnoInicio.grid(row=2, column=1, sticky=EW, pady=10, padx=10)
 
-        self.labelArquivoDeConsolidacao.grid(row=4, column=0, pady=10, padx=10, sticky=W)
-        self.inputArquivoDeConsolidacao.grid(row=4, column=1, sticky=EW, pady=10, padx=10)
-        self.buttonArquivoDeConsolidacao.grid(row=4, column=3, pady=10, padx=10)
+        self.labelAnoFim.grid(row=3, column=0, pady=10, padx=10, sticky=W)
+        self.inputAnoFim.grid(row=3, column=1, sticky=EW, pady=10, padx=10)
 
-        self.labelCaminhoExcel.grid(row=5, column=0, pady=10, padx=10, sticky=W)
-        self.inputCaminhoExcel.grid(row=5, column=1, sticky=EW, pady=10, padx=10)
-        self.buttonCaminhoExcel.grid(row=5, column=3, pady=10, padx=10)
+        self.labelNumDownloads.grid(row=4, column=0, pady=10, padx=10, sticky=W)
+        self.inputNumDownloads.grid(row=4, column=1, sticky=EW, pady=10, padx=10)
 
-        self.labelCaminhoPbix.grid(row=6, column=0, pady=10, padx=10, sticky=W)
-        self.inputCaminhoPbix.grid(row=6, column=1, sticky=EW, pady=10, padx=10)
-        self.buttonCaminhoPbix.grid(row=6, column=3, pady=10, padx=10)
+        self.labelMaxSize.grid(row=5, column=0, pady=10, padx=10, sticky=W)
+        self.inputMaxSize.grid(row=5, column=1, sticky=EW, pady=10, padx=10)
+
+        self.labelUrlsExtras.grid(row=6, column=0, pady=10, padx=10, sticky=W)
+        self.inputUrlsExtras.grid(row=6, column=1, sticky=EW, pady=10, padx=10)
+
+
+        self.labelOnlyExtra.grid(row=7, column=0, pady=10, padx=10, sticky=W)
+        self.inputOnlyExtra.grid(row=7, column=1, sticky=EW, pady=10, padx=10)
+
+        self.labelSearchKeywords.grid(row=8, column=0, pady=10, padx=10, sticky=W)
+        self.inputSearchKeywords.grid(row=8, column=1, sticky=EW, pady=10, padx=10)
+
 
         # self.buttonPegarAuto.grid(row=1, column=3, pady=10, padx=10)
         self.buttonIniciar.grid(row=1, column=4, pady=10, padx=10)
-        self.buttonContinuar.grid(row=1, column=5, pady=10, padx=10)
+        # self.buttonContinuar.grid(row=1, column=5, pady=10, padx=10)
 
         
         
         self.master.mainloop()        
 
 
-    def acharCaminho(self,num):
-        if num==0:
-            arq = fd.askopenfilename()
-            self.inputArquivoDeConsolidacao.delete(0,END)
-            self.inputArquivoDeConsolidacao.insert(0,arq)
-        elif num == 1:
-            arq = fd.askdirectory()
-            self.inputCaminhoExcel.delete(0, END)
-            self.inputCaminhoExcel.insert(0, arq)
-        else:
-            arq = fd.askopenfilename()
-            self.inputCaminhoPbix.delete(0, END)
-            self.inputCaminhoPbix.insert(0, arq)
+    def acharCaminho(self):
+        arq = fd.askdirectory()
+        self.inputDownload.delete(0, END)
+        self.inputDownload.insert(0, arq)
     
     def updateSaveFile(self):
         f = open("./saveFile.txt", "w")
-        f.write(self.inputEmail.get()) #production
+        f.write(self.inputQuery.get()) #production
         f.write("\n")
-        f.write(self.inputArquivoDeConsolidacao.get()) #production
+        f.write(self.inputAnoInicio.get()) #production
         f.write("\n")
-        f.write(self.inputCaminhoExcel.get()) #production
+        f.write(self.inputDownload.get()) #production
         f.write("\n")
-        f.write(self.inputCaminhoPbix.get()) #production
+        f.write(self.inputAnoFim.get()) #production
+        f.write("\n")
+        f.write(self.inputMaxSize.get()) #production
+        f.write("\n")
+        f.write(self.inputNumDownloads.get()) #production
+        f.write("\n")
+        f.write(self.inputUrlsExtras.get()) #production
+        f.write("\n")
+        f.write(self.inputOnlyExtra.get()) #production
+        f.write("\n")
+        f.write(self.inputSearchKeywords.get())  # production
         # f.write("\n")
-        # f.write(self.inputPassword.get()) #production
+        # f.write(self.inputUrlsExtras.get()) #production
         f.close()
             
 
