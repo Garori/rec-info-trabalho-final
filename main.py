@@ -1,26 +1,19 @@
 from urllib.parse import quote
-import pandas as pd
 from internetarchive import get_session
 from internetarchive import download
 import sys
 sys.coinit_flags = 2  # COINIT_APARTMENTTHREADED
-import shutil
 from GUI import GUI
 from pywinauto.application import Application
-import psutil
 from selenium.webdriver.common.keys import Keys
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.chrome.service import Service as ChromeService
 import json
-from openpyxl import load_workbook
 import os
 from urllib.request import urlopen as curl
 
@@ -38,7 +31,8 @@ class Crawler():
         self.limitDomain = int(self.gui.inputNumDownloads.get())                                                                  # Número máximo de downloads por domínio encontrado
         self.maxSize = int(self.gui.inputMaxSize.get())                                                                       # tamanho máximo em MB  
         self.DownloadAllFromurlsImportantesAdicionais = self.gui.inputOnlyExtra.get()                                       # (1 para ligar)ignora a pesquisa de urls na wikipedia e baixa tudo da lista de sites adicionais                                      
-        self.urlsImportantesAdicionais = self.gui.inputUrlsExtras.get().split(" ")                                # (OPCIONAL)
+        self.urlsImportantesAdicionais = self.gui.inputUrlsExtras.get().split(" ") 
+        print(self.urlsImportantesAdicionais)                               # (OPCIONAL)
         #OUTRAS VARIÁVEIS
         self.numBaixadosDomain=0
         self.keywords = self.query.split(" ")
@@ -60,73 +54,76 @@ class Crawler():
         results=[]
         if self.DownloadAllFromurlsImportantesAdicionais !="1":
             wikiSearchResults = json.load(curl("https://pt.wikipedia.org/w/api.php?action=query&list=search&srsearch="+quote(self.query)+"&format=json"))
-            wikiPage = wikiSearchResults["query"]["search"][0]
-            print(wikiPage)
+            if len(wikiSearchResults["query"]["search"])>0:
+                wikiPage = wikiSearchResults["query"]["search"][0]
+                print(wikiPage)
 
 
 
-            # print(wikiPageTitle)
-            wikiRevisions = json.load(curl("https://pt.wikipedia.org/w/api.php?action=query&prop=revisions&titles="+quote(wikiPage["title"])+"&rvlimit=500&rvslots=main&rvprop=ids&rvstart="+self.startYear+"-12-31T00:00:00Z&rvend="+self.endYear+"-12-31T00:00:00Z&rvdir=newer&format=json"))
-            wikiRevisions = wikiRevisions["query"]["pages"][str( wikiPage["pageid"])]["revisions"]
-            print(len(wikiRevisions))
-            extLinks=[]
-            # revIds=""
-            lastTemp=None
-            for revisionIndex in range(0, len(wikiRevisions), 10):
-                # print(str(wikiRevisions[revisionIndex]["revid"]))
-                temp = json.load(curl("https://pt.wikipedia.org/w/api.php?action=parse&format=json&prop=externallinks&oldid="+str(wikiRevisions[revisionIndex]["revid"])+"&format=json"))
-                # print(temp)
-                if temp == lastTemp:
-                    continue
-                else:
-                    for link in temp["parse"]["externallinks"]:
-                        if link.find("https://web.archive.org/web/") != -1:
-                            link = link.replace("https://web.archive.org/web/", "")
-                            link = link[15:]
+                # print(wikiPageTitle)
+                wikiRevisions = json.load(curl("https://pt.wikipedia.org/w/api.php?action=query&prop=revisions&titles="+quote(wikiPage["title"])+"&rvlimit=500&rvslots=main&rvprop=ids&rvstart="+self.startYear+"-12-31T00:00:00Z&rvend="+self.endYear+"-12-31T00:00:00Z&rvdir=newer&format=json"))
+                wikiRevisions = wikiRevisions["query"]["pages"][str( wikiPage["pageid"])]["revisions"]
+                print(len(wikiRevisions))
+                extLinks=[]
+                # revIds=""
+                lastTemp=None
+                for revisionIndex in range(0, len(wikiRevisions), 10):
+                    # print(str(wikiRevisions[revisionIndex]["revid"]))
+                    temp = json.load(curl("https://pt.wikipedia.org/w/api.php?action=parse&format=json&prop=externallinks&oldid="+str(wikiRevisions[revisionIndex]["revid"])+"&format=json"))
+                    # print(temp)
+                    if temp == lastTemp:
+                        continue
+                    else:
+                        for link in temp["parse"]["externallinks"]:
+                            if link.find("https://web.archive.org/web/") != -1:
+                                link = link.replace("https://web.archive.org/web/", "")
+                                link = link[15:]
+                                # print(link)
+                            if link.find("http") != -1:
+                                indexCorte = link.find("/", 8)
+                                if indexCorte != -1:
+                                    link = link[:indexCorte]
+                            else:
+                                indexCorte = link.find("/")
+                                if indexCorte != -1:
+                                    link = link[:indexCorte]
                             # print(link)
-                        if link.find("http") != -1:
-                            indexCorte = link.find("/", 8)
-                            if indexCorte != -1:
-                                link = link[:indexCorte]
-                        else:
-                            indexCorte = link.find("/")
-                            if indexCorte != -1:
-                                link = link[:indexCorte]
-                        # print(link)
-                        if link.find("google.com") == -1:
-                            extLinks.append(link)
-                    lastTemp=temp
-                # print(extLinks)
-                # revIds += str(wikiRevisions[revisionIndex]["revid"])+"|"
+                            if link.find("google.com") == -1:
+                                extLinks.append(link)
+                        lastTemp=temp
+                    # print(extLinks)
+                    # revIds += str(wikiRevisions[revisionIndex]["revid"])+"|"
 
-            if len(wikiRevisions)<500:
-                temp = json.load(curl("https://pt.wikipedia.org/w/api.php?action=parse&format=json&prop=externallinks&oldid=" +str(wikiRevisions[-1]["revid"])+"&format=json"))
-                if temp == lastTemp:
-                    pass
-                else:
-                    for link in temp["parse"]["externallinks"]:
-                        if link.find("https://web.archive.org/web/") != -1:
-                            link = link.replace("https://web.archive.org/web/","")
-                            link = link[15:]
-                            # print(link)
-                        if link.find("http")!=-1:
-                            indexCorte = link.find("/",8)
-                            if indexCorte !=-1:
-                                link = link[:indexCorte]
-                        else:
-                            indexCorte = link.find("/")
-                            if indexCorte !=-1:
-                                link = link[:indexCorte]
-                        if link.find("google.com")==-1:
-                            extLinks.append(link)
-            self.urls = list(set(extLinks))
-            print("cabou")
+                if len(wikiRevisions)<500:
+                    temp = json.load(curl("https://pt.wikipedia.org/w/api.php?action=parse&format=json&prop=externallinks&oldid=" +str(wikiRevisions[-1]["revid"])+"&format=json"))
+                    if temp == lastTemp:
+                        pass
+                    else:
+                        for link in temp["parse"]["externallinks"]:
+                            if link.find("https://web.archive.org/web/") != -1:
+                                link = link.replace("https://web.archive.org/web/","")
+                                link = link[15:]
+                                # print(link)
+                            if link.find("http")!=-1:
+                                indexCorte = link.find("/",8)
+                                if indexCorte !=-1:
+                                    link = link[:indexCorte]
+                            else:
+                                indexCorte = link.find("/")
+                                if indexCorte !=-1:
+                                    link = link[:indexCorte]
+                            if link.find("google.com")==-1:
+                                extLinks.append(link)
+                self.urls = list(set(extLinks))
+                print("cabou")
 
-            # sleep(1000)
-            print(self.urls)
-            for index,url in enumerate(self.urls):
-                if url in self.urlsImportantesAdicionais:
-                    self.urls.pop(index)
+                # sleep(1000)
+                print(self.urls)
+                for index,url in enumerate(self.urls):
+                    if url in self.urlsImportantesAdicionais:
+                        self.urls.pop(index)
+            else:
+                print("nenhuma página da wikipedia foi encontrada")
 
             # self.urls = sorted(self.urls, key=lambda i: (i.find(self.keywords[0]), 9999)[i.find(self.keywords[0])==-1])
 
@@ -139,7 +136,13 @@ class Crawler():
 
         print("----------------------------------------------------------------------------------------")
         print(resultsArray)
+        print("\n")
+        print("\n")
+        print("----------------------------------------------------------------------------------------")
+        print("\n")
+        print("\n")
         for site in resultsArray:
+            print("baixando o arquivo do site: " + site)
             self.app.get(site)
             diretorio = os.scandir(self.downloadPath)
             # print(diretorio)
@@ -159,24 +162,18 @@ class Crawler():
             self.numDownloads = numDownloadsLocal
             self.tries=0
         sleep(20)
-        # print(domain[0])
-        # curl(resultsArray[3]["original"])
-        # s = get_session(config_file='./ia.ini')
-        # s.mount_http_adapter()
-        # search_results = s.search_items('levelupgames demo')
-        # print(search_results)
-        # for num, result in enumerate(search_results.iter_as_items()):
-        #     print(result)
-        # pass
+        print("Acabou o processo de download de arquivos")
 
     def getWaybackURLS(self,urls):
         results = []
         for url in urls:
-            if url[-1] != "/":
+            if url!="" and url[-1] != "/":
                 url = url+"/"
-            # print(url)
+            # print("site: " + str(url))
             results.append(json.load(curl("http://web.archive.org/cdx/search/cdx?url="+quote(url)+"*&"+("", "from="+self.startYear)[self.startYear.strip() != ""]+("", "&to="+self.endYear)[
                            self.endYear.strip() != ""]+"&output=json&limit=10000&filter=statuscode:200"+"&filter=mimetype:application/x-shockwave-flash"+"&showDupeCount=true&collapse=urlkey")))
+        print("http://web.archive.org/cdx/search/cdx?url="+quote(url)+"*&"+("", "from="+self.startYear)[self.startYear.strip() != ""]+("", "&to="+self.endYear)[
+            self.endYear.strip() != ""]+"&output=json&limit=10000&filter=statuscode:200"+"&filter=mimetype:application/x-shockwave-flash"+"&showDupeCount=true&collapse=urlkey")
         resultsArray = []
         # print(results)
         for num, domain in enumerate(results):
@@ -216,6 +213,7 @@ class Crawler():
         self.urlsImportantesAdicionais = self.gui.inputUrlsExtras.get().split(" ")
         self.keywords = self.query.split(" ")
         self.numDownloads = len([1 for _ in os.scandir(self.downloadPath)])
+        self.gui.updateSaveFile()
 
     def configurar_edge(self):
         # DEFINE AS OPCOES
